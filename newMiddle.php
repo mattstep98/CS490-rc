@@ -9,17 +9,25 @@ $message_type = $_POST["message_type"];
 $studentAnswer = $_POST["studentAnswer"];
 $examName = $_POST["examName"]; 
 $examID = $_POST["examID"];
-$examQuestionsAndPoints = $_POST[$examQuestionsAndPoints];
+$examQuestionsAndPoints = $_POST["examQuestionsAndPoints"];
 $questionID = $_POST["questionID"];
 $points = $_POST["points"];
-$questionName = $_POST["questionName"];
 $questionLevel = $_POST["questionLevel"];
 $questionTopic = $_POST["questionTopic"];
 $questionDescription = $_POST["questionDescription"];
 $teacherComment = $_POST["teacherComment"];
-$newScore = $_POST["newScore"];
-$testCases = $_POST["testCases"];
+$testCasesInputs = $_POST["testCasesInputs"];
+$testCasesOutputs = $_POST["testCasesOutputs"];
 $grade = $_POST["grade"];
+
+
+
+//Log File--------------------------------------------------------------
+$log = fopen("logFile.txt", "a") or die("Unable to open Log File");
+$logTxt = "messageType: $message_type".PHP_EOL. "\tusername: $username".PHP_EOL. "\t studentAnswer: $studentAnswer".PHP_EOL. "\texamName: $examName".PHP_EOL. "\texamID: $examID".PHP_EOL. "\texamQuestionsAndPoints: $examQuestionsAndPoints".PHP_EOL. "\tquestionID: $questionID".PHP_EOL. "\tpoints: $points".PHP_EOL. "\tquestionLevel: $questionLevel".PHP_EOL. "\tquestionTopic: $questionTopic".PHP_EOL. "\tquestionDescription: $questionDescription".PHP_EOL. "\tteacherComment: $teacherComment".PHP_EOL. "\ttestCasesInputs: $testCasesInputs".PHP_EOL. "\ttestCasesOutputs: $testCasesOutputs".PHP_EOL. "\tgrade: $grade".PHP_EOL.PHP_EOL;
+fwrite($log,$logTxt);
+fclose($log);
+
 
 
 
@@ -57,7 +65,7 @@ elseif ($message_type == "view_results_student"){ //views results from back
 }
 elseif ($message_type == "take_exam"){ //
    $res_take_exam = take_exam($examID);
-   echo $res_take_exams;
+   echo $res_take_exam;
 }
 elseif ($message_type == "add_student_answer"){ //adds the students answer to the database
    $res_add_student_answer = add_student_answer($examID, $questionID, $username, $studentAnswer);
@@ -72,7 +80,7 @@ elseif ($message_type == "teacher_override"){ //Teacher overrides existing score
    echo $res_teacher_override;
 }
 elseif ($message_type == "create_question"){ //adds a question to the database
-   $res_create_question=create_question($questionDescription, $questionTopic, $questionLevel, $testCases);
+   $res_create_question=create_question($questionDescription, $questionTopic, $questionLevel, $testCasesInputs, $testCasesOutputs);
    echo $res_create_question;
 }
 elseif ($message_type == "release_scores"){ //releases scores
@@ -84,7 +92,7 @@ elseif ($message_type == "filter_question"){ //releases scores
    echo $res_filter_question;
 }
 elseif ($message_type == "auto_grade"){ //trigger the autograding
-  $res_auto_grade=autoGrade($examID,$questionID, $username, $studentAnswer, $testCases);
+  $res_auto_grade=autoGrade($examID, $questionID,$questionDescription, $username, $studentAnswer, $testCasesInputs, $testCasesOutputs, $points);
   echo $res_auto_grade;
 }  
 elseif ($message_type == "list_students_that_took_exam"){ //trigger the autograding
@@ -126,9 +134,9 @@ function create_exam($examName, $examQuestionsAndPoints)
   return $res;
 }
 
-function create_question($questionDescription, $questionTopic, $questionLevel, $testCases)
+function create_question($questionDescription, $questionTopic, $questionLevel, $testCasesInputs, $testCasesOutputs)
 {
- 	$data = array('questionDescription' => $questionDescription, 'questionTopic' => $questionTopic, 'questionLevel' => $questionLevel, 'testCases' => $testCases);
+ 	$data = array('questionDescription' => $questionDescription, 'questionTopic' => $questionTopic, 'questionLevel' => $questionLevel, 'testCasesInputs' => $testCasesInputs, 'testCasesOutputs' => $testCasesOutputs);
  	$url = "https://web.njit.edu/~mjs239/CS490/database/createQuestion.php";
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -307,9 +315,9 @@ function release_scores($examID)
 }
 
 
-function autoGrade($examID,$questionID, $questionDescription, $username, $studentAnswer, $testCases)
+function autoGrade($examID, $questionID,$questionDescription, $username, $studentAnswer, $testCasesInputs, $testCasesOutputs, $points)
 {
-  $data = array('examID' => $examID, 'questionID' => $questionID,'questionDescription' => $questionDescription, 'username' => '$username', 'studentAnswer' => $studentAnswer, 'testCases' => $testCases);
+  $data = array('examID' => $examID, 'questionID' => $questionID,'questionDescription' => $questionDescription, 'username' => $username, 'studentAnswer' => $studentAnswer, 'testCasesInputs' => $testCasesInputs, 'testCasesOutputs' => $testCasesOutputs, 'points' => $points);
  	$url = "https://web.njit.edu/~mjs239/CS490/rc/autoGrade.php";
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);

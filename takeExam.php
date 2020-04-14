@@ -1,6 +1,7 @@
 <?php
 include "db.php";
 $examID=$_POST['examID'];
+$examID = (int)$examID;
 
 $result = mysqli_query($connection, "SELECT examID, questionID, points FROM CS490_exams WHERE ExamID = '$examID'");
 if (mysqli_num_rows($result) > 0) {
@@ -16,7 +17,7 @@ if (mysqli_num_rows($result) > 0) {
   }
 } else {
 // No result, then we return the -1.
-$json = array("examID" => "-1");
+$json = array("message_type" => "-1");
 }
 echo json_encode($json);
 
