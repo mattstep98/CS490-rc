@@ -1,5 +1,7 @@
 <?php
 include "db.php";
+$examID = $_POST["examID"];
+
 
 $result = mysqli_query($connection, "SELECT DISTINCT username FROM CS490_studentGrading WHERE examID = '$examID'");
 if (mysqli_num_rows($result) > 0) 
