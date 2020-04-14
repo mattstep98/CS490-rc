@@ -1,0 +1,14 @@
+login_request(username,password) <- NO CHANGES
+filter_question(questionTopic,questionLevel) <-  vars work independently, returns questionID, description, questionTopic, questionLevel
+get_questions() <- views all questions, returns questionID, description, questionTopic, questionLevel
+select_question(questionID) <- views a singular question, returns questionID, description, questionTopic, questionLevel
+create_question(questionDescription, questionTopic, questionLevel, testCases) testCases is an array [[[TC1I1,TC1I2,...,TC1IN],TC1OUT],[[TC2I1,TC2I2,...,TC2IN],TC2OUT],...,[[TCNI1,TCNI2,...,TCNIN],TCNOUT]] <- returns New question created successfully
+create_exam(examName, examQuestionsAndPoints) examQuestionsAndPoints is an array  [{questionID:1,points:25},{questionID:2,points:50},{questionID:3,points:25}] <- returns Created New Exam Successfully
+list_exams() <- returns examID, examName
+take_exam(examID) This is only for recieving exam questions <- returns examID, questionID, points, description
+add_student_answer(examID,questionID,username,studentAnswer) ADD ONE QUESTION AT A TIME FOR THIS, THIS TRIGGERS AUTOGRADING <- returns New answer Added!
+list_students_that_took_exam(examID) <- returns usernames of students who submitted an exam
+view_results_teacher(username,examID) <- returns description, grade, comments  ...grade and comments is an array [{questionID:1,points:25},{questionID:2,points:50},{questionID:3,points:25}]   ...replace points to comment for comment array
+view_results_student(student,examID) <- returns description, grade, comments IF grades are released  grade and comments are arrays from previous
+release_scores(examID,username) <- returns Successfully Updated
+teacher_override(examID,questionID,username,grade,teacherComment) ... grade and comments are the above array <- returns Successfully Updated
