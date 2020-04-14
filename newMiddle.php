@@ -215,9 +215,9 @@ function teacher_override($examID,$questionID,$username,$grade,$teacherComment)
   return $res;
 }
 
-function list_students_that_took_exam($username,$examID)
+function list_students_that_took_exam($examID)
 {
- 	$data = array('username' => $username, 'examID' => $examID);
+ 	$data = array('examID' => $examID);
  	$url = "https://web.njit.edu/~mjs239/CS490/database/listStudentsThatTookExam.php";
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
