@@ -1,10 +1,6 @@
 <?php
 include "db.php";
-$examID = $_POST["examID"];
-
-
-
-$result = mysqli_query($connection, "SELECT DISTINCT username FROM CS490_studentGrading WHERE examID = '$examID'");
+$result = mysqli_query($connection, "SELECT  username FROM CS490_users WHERE role = 'student'");
 if (mysqli_num_rows($result) > 0) 
 {
   $json = array();
@@ -16,7 +12,7 @@ if (mysqli_num_rows($result) > 0)
 else 
 {
  // No result, then we return the -1.
- $json = array("examID" => "-1");
+ $json = array("message" => "No Students");
 }
 echo json_encode($json);
 

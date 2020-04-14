@@ -17,18 +17,13 @@ echo "Error: " . $result . "<br>" . mysqli_error($connection);
 
 
 $testCases = mysqli_query($connection, "SELECT testCases FROM CS490_questions WHERE questionID = '$questionID'");
-
-mysqli_close($conn);
-
-
-
-
+$questionDescription = mysqli_query($connection, "SELECT description FROM CS490_questions WHERE questionID = '$questionID'");
 
 
 
 //trigger the autograding
-function triggerAutograde($examID, $questionID, $userName, $studentAnswer, $testCases){
-  $data = array('message_type' => "auto_grade", 'examID' => $examID, '$questionID' => $questionID, 'userName' => $userName, 'studentAnswer' => $studentAnswer, 'testCases' => $testCases);
+function triggerAutograde($examID, $questionID,$questionDescription, $username, $studentAnswer, $testCases){
+  $data = array('message_type' => "auto_grade", 'examID' => $examID, '$questionID' => $questionID,'$questionDescription' => $questionDescription,'username' => $username, 'studentAnswer' => $studentAnswer, 'testCases' => $testCases);
  	$url = "https://web.njit.edu/~mjs239/CS490/rc/newMiddle.php";
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -42,5 +37,9 @@ function triggerAutograde($examID, $questionID, $userName, $studentAnswer, $test
 $result = triggerAutograde($examID, $questionID, $userName, $studentAnswer, $testCases)
 
 
+//TODO: PUT $result in the database
 
+
+
+mysqli_close($conn);
 ?>

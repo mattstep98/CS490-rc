@@ -22,6 +22,7 @@ $testCases = $_POST["testCases"];
 $grade = $_POST["grade"];
 
 
+
 //message_types-------------------------------------------------------
 if ($message_type == "login_request"){ //login
   $res_login=login_backEnd($username,$password);
@@ -75,20 +76,24 @@ elseif ($message_type == "create_question"){ //adds a question to the database
    echo $res_create_question;
 }
 elseif ($message_type == "release_scores"){ //releases scores
-   $res_release_scores=releaseScores($examID,$username);
+   $res_release_scores=release_scores($examID);
    echo $res_release_scores;
 }
 elseif ($message_type == "filter_question"){ //releases scores
    $res_filter_question=filter_question($topic,$level);
    echo $res_filter_question;
 }
-if ($message_type == "auto_grade"){ //trigger the autograding
+elseif ($message_type == "auto_grade"){ //trigger the autograding
   $res_auto_grade=autoGrade($examID,$questionID, $username, $studentAnswer, $testCases);
   echo $res_auto_grade;
 }  
-if ($message_type == "list_students_that_took_exam"){ //trigger the autograding
-  $res_list_students_that_took_exam=list_students_that_took_exam($username,$examID);
+elseif ($message_type == "list_students_that_took_exam"){ //trigger the autograding
+  $res_list_students_that_took_exam=list_students_that_took_exam($examID);
   echo $res_list_students_that_took_exam;
+}  
+elseif ($message_type == "list_students"){ //trigger the autograding
+  $res_list_students=list_students();
+  echo $res_list_students;
 }  
 else{
   echo '{"message_type": "error"}';
@@ -228,6 +233,22 @@ function list_students_that_took_exam($examID)
   return $res;
 }
 
+function list_students()
+{
+ 	$data = array();
+ 	$url = "https://web.njit.edu/~mjs239/CS490/database/listStudents.php";
+ 	$curl = curl_init();
+ 	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+  curl_setopt($curl, CURLOPT_URL, $url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+ 	$res = curl_exec($curl); //Recieve the encoded JSON response from the backend
+  curl_close ($curl);
+  return $res;
+}
+
+
+
+
 
 function view_results_teacher($username,$examID)
 {
@@ -272,9 +293,9 @@ function get_questions()
 }
 
 
-function release_scores($examID,$username)
+function release_scores($examID)
 {
- 	$data = array('examID' => $examID,'username' => '$username');
+ 	$data = array('examID' => $examID);
  	$url = "https://web.njit.edu/~mjs239/CS490/database/releaseScores.php";
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -286,53 +307,17 @@ function release_scores($examID,$username)
 }
 
 
-
-
-
-
-
-//Testing user input functions-----------------------------------------------------------
-function get_test_cases($questionID){
-  $data = array('questionID' => $questionID);
- 	$url = "https://web.njit.edu/~fw73/selectTestcase.php";
- 	$curl = curl_init();
- 	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-  curl_setopt($curl, CURLOPT_URL, $url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
- 	$res = curl_exec($curl); //Recieve the encoded JSON response from the backend
-  curl_close ($curl);
-  return $res;
-}
-
-function get_user_code($questionID,$username,$examID){
-  $data = array('questionID' => $questionID,'username' => $username,'examID' => $examID);
- 	$url = "https://web.njit.edu/~fw73/reviewRawAnswer.php";
- 	$curl = curl_init();
- 	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-  curl_setopt($curl, CURLOPT_URL, $url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
- 	$res = curl_exec($curl); //Recieve the encoded JSON response from the backend
-  curl_close ($curl);
-  return $res;
-}
-
-function send_results_to_back($questionID,$examID,$username,$res_process){
-  $data = array('questionID' => $questionID,'examID' => $examID,'username' => $username,'grade' => $res_process);
- 	$url = "https://web.njit.edu/~fw73/GradeAnswer.php";
- 	$curl = curl_init();
- 	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-  curl_setopt($curl, CURLOPT_URL, $url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
- 	$res = curl_exec($curl); //Recieve the encoded JSON response from the backend
-  curl_close ($curl);
-  return $res;
-}
-
-//Testing User Input(Autograding)-------------------------------------------------------------------------
-
-function autoGrade($examID,$questionID, $username, $studentAnswer, $testCases)
+function autoGrade($examID,$questionID, $questionDescription, $username, $studentAnswer, $testCases)
 {
-  
+  $data = array('examID' => $examID, 'questionID' => $questionID,'questionDescription' => $questionDescription, 'username' => '$username', 'studentAnswer' => $studentAnswer, 'testCases' => $testCases);
+ 	$url = "https://web.njit.edu/~mjs239/CS490/rc/autoGrade.php";
+ 	$curl = curl_init();
+ 	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+  curl_setopt($curl, CURLOPT_URL, $url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+ 	$res = curl_exec($curl); //Recieve the encoded JSON response from the backend
+  curl_close ($curl);
+  return $res;
 }
 
 
