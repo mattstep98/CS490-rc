@@ -1,5 +1,5 @@
 <?php
-$connection = mysqli_connect('sql1.njit.edu', 'mjs239', 'd98qcADz', 'mjs239');
+$connection = mysqli_connect('SERVER', 'USER', 'DATABASEPASSWORD', 'TABLE');
 
 if (!$connection) 
 {
